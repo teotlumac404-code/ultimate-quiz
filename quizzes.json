@@ -1,0 +1,188 @@
+{
+  "sk": {
+    "question_label": "Otázka",
+    "score_label": "Body",
+    "next": "Ďalej →",
+    "back": "← Späť na výber",
+    "notice_title": "Vyber odpoveď",
+    "choose_answer": "Najprv vyber jednu odpoveď.",
+    "result_title": "Tvoj výsledok",
+    "result_message": "Skvelá práca! Skús si kvíz zahrať znova.",
+    "play_again": "Späť na výber jazykov",
+    "questions": [
+      {
+        "question": "Aké je hlavné mesto Slovenska?",
+        "answers": [
+          "Košice",
+          "Bratislava",
+          "Žilina",
+          "Nitra"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "Koľko dní má priestupný rok?",
+        "answers": [
+          "364",
+          "365",
+          "366",
+          "367"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Ktorá planéta je najbližšie k Slnku?",
+        "answers": [
+          "Venuša",
+          "Zem",
+          "Mars",
+          "Merkúr"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "Koľko strán má trojuholník?",
+        "answers": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "Ktoré zviera je známe ako kráľ zvierat?",
+        "answers": [
+          "Tiger",
+          "Lev",
+          "Slon",
+          "Vlk"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "Aký jazyk sa používa v Brazílii?",
+        "answers": [
+          "Španielčina",
+          "Francúzština",
+          "Portugalčina",
+          "Taliančina"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Koľko minút má jedna hodina?",
+        "answers": [
+          "30",
+          "45",
+          "60",
+          "90"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Ktorý oceán je najväčší?",
+        "answers": [
+          "Atlantický",
+          "Indický",
+          "Severný ľadový",
+          "Tichý"
+        ],
+        "correct": 3
+      }
+    ]
+  },
+  "cs": {
+    "question_label": "Otázka",
+    "score_label": "Body",
+    "next": "Další →",
+    "back": "← Zpět na výběr",
+    "notice_title": "Vyber odpověď",
+    "choose_answer": "Nejdřív vyber jednu odpověď.",
+    "result_title": "Tvůj výsledek",
+    "result_message": "Skvělá práce! Zkus si kvíz zahrát znovu.",
+    "play_again": "Zpět na výběr jazyků",
+    "questions": [
+      {
+        "question": "Jaké je hlavní město České republiky?",
+        "answers": [
+          "Brno",
+          "Ostrava",
+          "Praha",
+          "Plzeň"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Kolik dní má přestupný rok?",
+        "answers": [
+          "364",
+          "365",
+          "366",
+          "367"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Která planeta je nejblíže Slunci?",
+        "answers": [
+          "Venuše",
+          "Země",
+          "Mars",
+          "Merkur"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "Kolik stran má trojúhelník?",
+        "answers": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "Které zvíře je známé jako král zvířat?",
+        "answers": [
+          "Tygr",
+          "Lev",
+          "Slon",
+          "Vlk"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "Jakým jazykem se mluví v Brazílii?",
+        "answers": [
+          "Španělsky",
+          "Francouzsky",
+          "Portugalsky",
+          "Italsky"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Kolik minut má jedna hodina?",
+        "answers": [
+          "30",
+          "45",
+          "60",
+          "90"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Který oceán je největší?",
+        "answers": [
+          "Atlantský",
+          "Indický",
+          "Severní ledový",
+          "Tichý"
+        ],
+        "correct": 3
+      }
+    ]
+  }
+}
