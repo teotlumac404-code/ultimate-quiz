@@ -1,163 +1,118 @@
 import json
 import random
-import sys
-import tkinter as tk
-from tkinter import messagebox
 from pathlib import Path
+from kivy.app import App
+from kivy.metrics import dp
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.togglebutton import ToggleButton
+from kivy.core.window import Window
 
+BG = (0.06, 0.09, 0.15, 1)
+PANEL = (0.11, 0.15, 0.22, 1)
+PURPLE = (0.43, 0.36, 0.99, 1)
+WHITE = (0.96, 0.97, 1, 1)
+MUTED = (0.70, 0.75, 0.83, 1)
+GREEN = (0.05, 0.62, 0.47, 1)
+BLUE = (0.14, 0.39, 0.92, 1)
 
-APP_NAME = "ULTIMATE QUIZ"
+class UltimateQuizApp(App):
+    title = 'ULTIMATE QUIZ'
 
-
-def app_dir():
-    """Folder containing the app files, including when bundled by PyInstaller."""
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).resolve().parent
-    return Path(__file__).resolve().parent
-
-
-def load_quizzes():
-    data_file = app_dir() / "quizzes.json"
-    if not data_file.exists():
-        # PyInstaller may bundle the data file inside the executable folder.
-        bundled = Path(getattr(sys, "_MEIPASS", app_dir())) / "quizzes.json"
-        data_file = bundled
-    with data_file.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-class UltimateQuizApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title(APP_NAME)
-        self.root.geometry("760x560")
-        self.root.minsize(620, 480)
-        self.root.configure(bg="#101827")
-
-        self.data = load_quizzes()
-        self.language = "sk"
+    def build(self):
+        Window.clearcolor = BG
+        self.data = json.loads((Path(__file__).parent / 'quizzes.json').read_text(encoding='utf-8'))
+        self.language = 'sk'
         self.questions = []
         self.index = 0
         self.score = 0
-        self.selected = tk.StringVar(value="")
+        self.selected = None
+        self.root_box = BoxLayout(orientation='vertical', padding=dp(20), spacing=dp(12))
+        self.show_start()
+        return self.root_box
 
-        self.build_start_screen()
+    def reset_layout(self):
+        self.root_box.clear_widgets()
 
-    def clear(self):
-        for widget in self.root.winfo_children():
-            widget.destroy()
+    def add_label(self, text, size=18, color=WHITE, height=None, bold=False):
+        lbl = Label(text=text, font_size=dp(size), color=color, size_hint_y=None if height else 1,
+                    height=dp(height) if height else 0, bold=bold, halign='center', valign='middle')
+        lbl.bind(size=lambda inst, val: setattr(inst, 'text_size', (val[0] - dp(8), None)))
+        self.root_box.add_widget(lbl)
+        return lbl
 
-    def label(self, parent, text, size=12, color="#f8fafc", bold=False, **kwargs):
-        return tk.Label(
-            parent, text=text, font=("Segoe UI", size, "bold" if bold else "normal"),
-            fg=color, bg=kwargs.pop("bg", "#101827"), wraplength=680,
-            justify=kwargs.pop("justify", "center"), **kwargs
-        )
+    def make_button(self, text, callback, color=PURPLE, height=54):
+        btn = Button(text=text, size_hint_y=None, height=dp(height), background_normal='',
+                     background_color=color, color=WHITE, font_size=dp(17), bold=True)
+        btn.bind(on_release=lambda *_: callback())
+        self.root_box.add_widget(btn)
+        return btn
 
-    def button(self, parent, text, command, bg="#6d5dfc", **kwargs):
-        return tk.Button(
-            parent, text=text, command=command, font=("Segoe UI", 12, "bold"),
-            fg="#ffffff", bg=bg, activebackground="#5144d8",
-            activeforeground="#ffffff", relief="flat", bd=0, padx=18, pady=11,
-            cursor="hand2", **kwargs
-        )
-
-    def build_start_screen(self):
-        self.clear()
-        frame = tk.Frame(self.root, bg="#101827", padx=30, pady=28)
-        frame.pack(fill="both", expand=True)
-
-        self.label(frame, "🎯 ULTIMATE QUIZ", 28, "#a5b4fc", True).pack(pady=(14, 8))
-        self.label(frame, "Otestuj svoje vedomosti!", 15, "#cbd5e1").pack(pady=(0, 26))
-        self.label(frame, "Vyber si jazyk kvízu:", 13, "#f8fafc", True).pack(pady=(0, 12))
-
-        row = tk.Frame(frame, bg="#101827")
-        row.pack()
-        self.button(row, "🇸🇰 Slovenčina", lambda: self.start_quiz("sk"), bg="#0f9f78").pack(side="left", padx=8)
-        self.button(row, "🇨🇿 Čeština", lambda: self.start_quiz("cs"), bg="#2563eb").pack(side="left", padx=8)
-
-        self.label(
-            frame,
-            "Vyber jazyk a odpovedaj na otázky. Na konci uvidíš svoj výsledok.",
-            11, "#94a3b8"
-        ).pack(pady=28)
-        self.label(frame, "ULTIMATE QUIZ • PC Edition", 9, "#64748b").pack(side="bottom", pady=(20, 0))
+    def show_start(self):
+        self.reset_layout()
+        self.add_label('🎯 ULTIMATE QUIZ', 29, (0.65, 0.69, 1, 1), 68, True)
+        self.add_label('Otestuj svoje vedomosti!', 17, MUTED, 48)
+        self.add_label('Vyber si jazyk kvízu:', 18, WHITE, 46, True)
+        self.make_button('🇸🇰  Slovenčina', lambda: self.start_quiz('sk'), GREEN)
+        self.make_button('🇨🇿  Čeština', lambda: self.start_quiz('cs'), BLUE)
+        self.add_label('8 otázok • Výsledok na konci', 13, MUTED, 42)
 
     def start_quiz(self, language):
         self.language = language
-        self.questions = list(self.data[language]["questions"])
+        self.questions = list(self.data[language]['questions'])
         random.shuffle(self.questions)
         self.index = 0
         self.score = 0
         self.show_question()
 
     def show_question(self):
-        self.clear()
-        lang_data = self.data[self.language]
+        self.reset_layout()
+        lang = self.data[self.language]
         if self.index >= len(self.questions):
             self.show_result()
             return
-
         q = self.questions[self.index]
-        frame = tk.Frame(self.root, bg="#101827", padx=32, pady=24)
-        frame.pack(fill="both", expand=True)
+        self.selected = None
+        self.add_label('ULTIMATE QUIZ', 22, (0.65, 0.69, 1, 1), 42, True)
+        self.add_label(f"{lang['question_label']} {self.index + 1}/{len(self.questions)}  •  {lang['score_label']}: {self.score}", 14, MUTED, 40)
+        self.add_label(q['question'], 21, WHITE, 110, True)
+        self.answer_buttons = []
+        for i, answer in enumerate(q['answers']):
+            btn = ToggleButton(text=answer, group='answers', size_hint_y=None, height=dp(52),
+                               background_normal='', background_color=PANEL, color=WHITE,
+                               font_size=dp(16), halign='center')
+            btn.bind(on_release=lambda inst, ix=i: self.select_answer(ix))
+            self.root_box.add_widget(btn)
+            self.answer_buttons.append(btn)
+        self.make_button('Ďalej →' if self.language == 'sk' else 'Další →', self.check_answer, PURPLE, 56)
+        self.make_button('← Späť na výber' if self.language == 'sk' else '← Zpět na výběr', self.show_start, PANEL, 46)
 
-        self.label(frame, "ULTIMATE QUIZ", 20, "#a5b4fc", True).pack(pady=(0, 8))
-        self.label(
-            frame,
-            f"{lang_data['question_label']} {self.index + 1}/{len(self.questions)}    •    {lang_data['score_label']}: {self.score}",
-            11, "#94a3b8"
-        ).pack(pady=(0, 22))
-
-        self.label(frame, q["question"], 18, "#f8fafc", True).pack(pady=(0, 22))
-
-        self.selected = tk.StringVar(value="")
-        for i, answer in enumerate(q["answers"]):
-            rb = tk.Radiobutton(
-                frame, text=answer, variable=self.selected, value=str(i),
-                font=("Segoe UI", 12), fg="#f8fafc", bg="#1e293b",
-                selectcolor="#4338ca", activebackground="#1e293b",
-                activeforeground="#ffffff", anchor="w", padx=14, pady=10,
-                wraplength=620, indicatoron=False, relief="flat", bd=0,
-                cursor="hand2"
-            )
-            rb.pack(fill="x", pady=5)
-
-        bottom = tk.Frame(frame, bg="#101827")
-        bottom.pack(fill="x", pady=(22, 0))
-        self.button(bottom, lang_data["back"], self.build_start_screen, bg="#475569").pack(side="left")
-        self.button(bottom, lang_data["next"], self.check_answer).pack(side="right")
+    def select_answer(self, index):
+        self.selected = index
+        for i, btn in enumerate(self.answer_buttons):
+            btn.state = 'down' if i == index else 'normal'
+            btn.background_color = PURPLE if i == index else PANEL
 
     def check_answer(self):
-        chosen = self.selected.get()
-        lang_data = self.data[self.language]
-        if chosen == "":
-            messagebox.showinfo(lang_data["notice_title"], lang_data["choose_answer"])
+        if self.selected is None:
+            self.add_label('Najprv vyber jednu odpoveď.' if self.language == 'sk' else 'Nejdřív vyber jednu odpověď.', 14, (1, 0.7, 0.35, 1), 34)
             return
-
-        q = self.questions[self.index]
-        if int(chosen) == q["correct"]:
+        if self.selected == self.questions[self.index]['correct']:
             self.score += 1
         self.index += 1
         self.show_question()
 
     def show_result(self):
-        self.clear()
-        lang_data = self.data[self.language]
+        self.reset_layout()
+        lang = self.data[self.language]
         total = len(self.questions)
-        percent = round((self.score / total) * 100) if total else 0
+        percent = round(self.score / total * 100) if total else 0
+        self.add_label('🏆 ' + lang['result_title'], 27, (0.65, 0.69, 1, 1), 80, True)
+        self.add_label(f'{self.score} / {total}', 40, WHITE, 80, True)
+        self.add_label(f'{percent}%', 27, (0.20, 0.85, 0.60, 1), 60, True)
+        self.add_label(lang['result_message'], 16, MUTED, 90)
+        self.make_button(lang['play_again'], self.show_start, PURPLE)
 
-        frame = tk.Frame(self.root, bg="#101827", padx=30, pady=35)
-        frame.pack(fill="both", expand=True)
-        self.label(frame, "🏆 " + lang_data["result_title"], 25, "#a5b4fc", True).pack(pady=(25, 18))
-        self.label(frame, f"{self.score} / {total}", 34, "#f8fafc", True).pack(pady=5)
-        self.label(frame, f"{percent}%", 20, "#34d399", True).pack(pady=5)
-        self.label(frame, lang_data["result_message"], 13, "#cbd5e1").pack(pady=(10, 26))
-        self.button(frame, lang_data["play_again"], self.build_start_screen).pack()
-        self.label(frame, "ULTIMATE QUIZ • PC Edition", 9, "#64748b").pack(side="bottom", pady=(20, 0))
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = UltimateQuizApp(root)
-    root.mainloop()
+if __name__ == '__main__':
+    UltimateQuizApp().run()
